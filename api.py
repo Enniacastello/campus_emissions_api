@@ -28,7 +28,7 @@ def campuses_info():
 
     # Aplica el reemplazo utilizando el método replace
     df['campus_id'] = df['campus_id'].replace(mapping)
-    campuses_info= df.groupby(['campus_id'])['building_id','consumption', 'gross_floor_area', 'emissions_per_sqft_yearly'].agg(
+    campuses_info= df.groupby(['campus_id'])[['building_id','consumption', 'gross_floor_area', 'emissions_per_sqft_yearly']].agg(
             {
             'building_id': 'nunique',
             'consumption' : 'sum',
