@@ -19,26 +19,28 @@ pip install -r requirements.txt
 
 ## How to run the app
 
+### Endpoints
 ```
 make run_api
 ``````
-
-### Endpoints
-
-
+Emissions per square foot at campus 2 (chart)
 ```
 campuses_year_info
 ```
-Emissions per square foot at campus 2 (chart)
 
+Overview metrics for campuses
 ```
 campuses_info
 ```
-Overview metrics for campuses
+Api to know what a influences the consumption
 
 ```
 shap
 ```
-Api to know what a influences the consumption
+
+
+## To run de predictions you need to download the "Model" folder from drive
+
+URL: https://drive.google.com/drive/folders/1TAD9ISqjb7S0tMk7DDaLQ2autvV4YxI9?usp=drive_link
 
 ## How to deploy in docker (wip)
