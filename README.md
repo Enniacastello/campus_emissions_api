@@ -23,15 +23,22 @@ pip install -r requirements.txt
 make run_api
 ``````
 
-###Endpoints
+### Endpoints
 
 
-´´´campuses_year_info
-´´´
-- Emissions per square foot at campus 2 (chart)
+```
+campuses_year_info
+```
+Emissions per square foot at campus 2 (chart)
 
-´´´campuses_info
-´´´
-overview metrics for campuses
+```
+campuses_info
+```
+Overview metrics for campuses
+
+```
+shap
+```
+Api to know what a influences the consumption
 
 ## How to deploy in docker (wip)
