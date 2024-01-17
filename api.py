@@ -23,7 +23,7 @@ def root():
 # CAMPUSES INITIAL METRICS
 @app.get("/campuses_info")
 def campuses_info():
-    df = pd.read_csv("data/campuses_info.csv").round(1)
+    df = pd.read_csv("data/campuses_info.csv").round(1).set_index('campus_id')
     output = df.rename(columns={"building_id": "n_build", "gross_floor_area" : "total_sq_ft", "co2_from_electric" :"total_missions" }).to_dict(orient='index')
     return output
 
