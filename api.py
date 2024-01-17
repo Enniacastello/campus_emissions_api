@@ -76,7 +76,7 @@ def predictions(campus_id=1, end_date_prediction = "2022-03-04"):
         'preds',
         'day',
         'seasonal_component'])
-
+    preds_df[['full_preds', 'lower_conf', 'upper_conf']] = preds_df[['full_preds', 'lower_conf','upper_conf']].cumsum()
     predictions_dict = preds_df.to_dict('index')
     predictions_dict = {str(key): value for key, value in predictions_dict.items()}
     predictions_json = {}
