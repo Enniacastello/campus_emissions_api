@@ -1,6 +1,8 @@
 import pandas as pd
+import pickle
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
 
 app = FastAPI()
 
@@ -41,8 +43,45 @@ def shap():
 
 # CONSUMPTION PREDICTIONS
 @app.get("/predictions")
-def predictions():
-    pass
+def predictions(campus_id=1, end_date_prediction = "2022-03-04"):
+    with open(f'models/sarimax_model_campus{campus_id}.pkl', 'rb') as file:
+        model = pickle.load(file)
+    with open(f'models/seasonal_one_year_campus{campus_id}.pkl', 'rb') as file:
+        seasonal_one_year = pickle.load(file)
+    prediction_start = pd.to_datetime("2021-12-27", format="%Y-%m-%d")#Fixed
+    prediction_end = pd.to_datetime(end_date_prediction, format="%Y-%m-%d")
+
+
+    # Predictions
+    preds = model.get_prediction(start=prediction_start, end=prediction_end, dynamic=False)
+    preds_df = preds.conf_int()
+    preds_df.columns = ['lower', 'upper']
+    preds_df['preds'] = preds.predicted_mean
+
+    preds_df["day"] = preds_df.index.weekday
+    preds_df = pd.merge(preds_df,seasonal_one_year, on = "day", how = "left")
+    preds_df["full_preds"] = preds_df["preds"] * preds_df["seasonal_component"]
+    preds_df["lower_conf"] = preds_df["lower"] * preds_df["seasonal_component"]
+    preds_df["upper_conf"] = preds_df["upper"] * preds_df["seasonal_component"]
+    date_range = pd.date_range(start=prediction_start, end=prediction_end, freq='D')
+
+    # Set the date range as the index of preds_df
+    preds_df.index = date_range
+    preds_df.index.name = 'timestamp'
+
+    preds_df = preds_df.drop(columns=['lower',
+        'upper',
+        'preds',
+        'day',
+        'seasonal_component'])
+
+    predictions_dict = preds_df.to_dict('index')
+    predictions_dict = {str(key): value for key, value in predictions_dict.items()}
+    predictions_json = {}
+    predictions_json['building_id'] = "all"
+    predictions_json['campus_id'] = campus_id
+    predictions_json['predictions'] = predictions_dict
+    return predictions_json
     #df = pd.read_csv("data/shap_means_combined.csv")
     #return df.rename(columns={"building_id": "n_build"}).to_dict(orient='index')
 
