@@ -22,25 +22,35 @@ def root():
 
 @app.get("/campuses_info")
 def campuses_info():
-    df = pd.read_csv("data/merged_emissions_prices.csv")
-    #Replacing 'campus_id' by the campus name
-    mapping = {1: 'Bundoora', 2: 'Albury-Wodonga'}
+    df = pd.read_csv("data/campuses_info.csv")
 
-    # Aplica el reemplazo utilizando el método replace
-    df['campus_id'] = df['campus_id'].replace(mapping)
-    campuses_info= df.groupby(['campus_id'])[['building_id','consumption', 'gross_floor_area', 'emissions_per_sqft_yearly']].agg(
-            {
-            'building_id': 'nunique',
-            'consumption' : 'sum',
-            'gross_floor_area' : 'sum',
-            'emissions_per_sqft_yearly' :'sum'
-            }
-        ).round(1)
-    output = campuses_info.rename(columns={"building_id": "n_build", "gross_floor_area" : "floor_area", "emissions_per_sqft_yearly" :"emissions_sqft_yr" }).to_dict(orient='index')
+    campuses_info= df.groupby(['campus_id', "building_id"]).agg(
+    {
+     #'building_id': 'nunique',
+     'gross_floor_area': 'mean',
+     'co2_from_electric': 'sum',
+     }
+).reset_index()\
+    .groupby(['campus_id']).agg(
+    {
+     'building_id': 'nunique',
+     'gross_floor_area': 'sum',
+     'co2_from_electric': 'sum',
+     }
+    ).round(1)
+    output = campuses_info.rename(columns={"building_id": "n_build", "gross_floor_area" : "total_sq_ft", "co2_from_electric" :"years_of_emissions" }).to_dict(orient='index')
     return output
 
+@app.get("/campuses_year_info")
+def campuses_year_info():
+    df = pd.read_csv("data/campus_overview.csv")
+    return df.rename(columns={"building_id": "n_build"}).to_dict(orient='index')
 
 
+@app.get("/shap")
+def shap():
+    df = pd.read_csv("data/shap_means_combined.csv")
+    return df.rename(columns={"building_id": "n_build"}).to_dict(orient='index')
 
 
 

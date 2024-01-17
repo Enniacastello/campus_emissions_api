@@ -23,4 +23,15 @@ pip install -r requirements.txt
 make run_api
 ``````
 
+###Endpoints
+
+
+´´´campuses_year_info
+´´´
+- Emissions per square foot at campus 2 (chart)
+
+´´´campuses_info
+´´´
+overview metrics for campuses
+
 ## How to deploy in docker (wip)
