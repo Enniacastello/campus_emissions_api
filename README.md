@@ -79,3 +79,34 @@ This is the code to run the API in your terminal
 ```
 run -it -e PORT=$PORT -p $PORT:$PORT $GAR_IMAGE:dev
 ```
+## Deploy your API to GoogleCloud
+
+First, let’s make sure to enable the Google Artifact Registry API for your project in GCP.
+
+Once this is done, let’s allow the docker command to push an image to GCP within our region.
+```
+gcloud auth configure-docker $GCP_REGION-docker.pkg.dev
+```
+
+Lets create a repo in that region as well!
+```
+gcloud artifacts repositories create taxifare --repository-format=docker \ --location=$GCP_REGION --description="Repository for storing taxifare images"
+```
+
+Lets build our image ready to push to that repo
+```
+docker build -t  $GCP_REGION-docker.pkg.dev/$GCP_PROJECT/taxifare/$GAR_IMAGE:prod .
+```
+
+Again, let’s make sure that our image runs correctly, so as to avoid wasting time pushing a broken image to the cloud.
+```
+docker run -e PORT=8000 -p 8000:8000 --env-file .env $GCP_REGION-docker.pkg.dev/$GCP_PROJECT/taxifare/$GAR_IMAGE:prod
+```
+
+Visit ```http://localhost:8000/ ``` and check whether the API is running as expected.
+
+We can now push our image to Google Artifact Registry.
+```
+docker push $GCP_REGION-docker.pkg.dev/$GCP_PROJECT/taxifare/$GAR_IMAGE:prod
+```
+The image should be visible in the GCP console.
