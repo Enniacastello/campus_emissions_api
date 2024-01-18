@@ -87,4 +87,8 @@ def predictions(campus_id=1, end_date_prediction = "2022-12-27"):
     #df = pd.read_csv("data/shap_means_combined.csv")
     #return df.rename(columns={"building_id": "n_build"}).to_dict(orient='index')
 
-#
+#av_consumption
+@app.get("/av_consump")
+def av_consump():
+    df = pd.read_csv("data/av_cons.csv").round(1)
+    return df.rename(columns={"building_id": "n_build"}).to_dict(orient='index')
