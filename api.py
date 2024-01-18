@@ -43,7 +43,7 @@ def shap():
 
 # CONSUMPTION PREDICTIONS
 @app.get("/predictions")
-def predictions(campus_id=1, end_date_prediction = "2022-03-04"):
+def predictions(campus_id=1, end_date_prediction = "2023-12-31"):
     with open(f'models/sarimax_model_campus{campus_id}.pkl', 'rb') as file:
         model = pickle.load(file)
     with open(f'models/seasonal_one_year_campus{campus_id}.pkl', 'rb') as file:
